@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import './answer.dart';
-import './question.dart';
+import './quiz.dart';
+import './result.dart';
 
 // void main() {
 //   runApp(MyApp());
@@ -17,29 +17,58 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final questions = const [
+  final _questions = const [
     {
       'questionText': 'What\'s yout favorate color?',
-      'answers': ['Black', 'Blue', 'Red', 'Green', 'White', 'Yellow'],
+      'answers': [
+        {'text': 'Black', 'score': 10},
+        {'text': 'Blue', 'score': 8},
+        {'text': 'Red', 'score': 6},
+        {'text': 'Green', 'score': 4},
+        {'text': 'White', 'score': 1},
+        {'text': 'Yellow', 'score': 3},
+      ],
     },
     {
       'questionText': 'What\'s your favorate food?',
-      'answers': ['Rice', 'Bread', 'Noodles', 'Biscuits', 'Meat'],
+      'answers': [
+        {'text': 'Noodles', 'score': 10},
+        {'text': 'Biscuits', 'score': 8},
+        {'text': 'Meat', 'score': 6},
+        {'text': 'Green', 'score': 4},
+        {'text': 'Bread', 'score': 1},
+        {'text': 'Rice', 'score': 3},
+      ],
     },
     {
       'questionText': 'What\'s your favorate animal?',
-      'answers': ['Beer', 'Cat', 'Dog', 'Goat', 'Lion', 'Tiger'],
+      'answers': [
+        {'text': 'Lion', 'score': 10},
+        {'text': 'Tiger', 'score': 10},
+        {'text': 'Cat', 'score': 4},
+        {'text': 'Dog', 'score': 1},
+        {'text': 'Goat', 'score': 3},
+      ],
     },
   ];
   var _questionIndex = 0;
-  void _answerQuestion() {
-    setState(() {
-      _questionIndex = _questionIndex + 1;
-    });
+  var _totalScore = 0;
 
+  void _resetQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+    });
+  }
+
+  void _answerQuestion(int score) {
+    _totalScore += score;
+    setState(() {
+      _questionIndex += 1;
+    });
     print(_questionIndex);
-    if (_questionIndex < questions.length) {
-      print('we have more questions');
+    if (_questionIndex < _questions.length) {
+      print('We have more questions!');
     } else {
       print('no more questions');
     }
@@ -48,28 +77,18 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: Scaffold(
-      appBar: AppBar(
-        title: Text('My First App'),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('My First App'),
+        ),
+        body: _questionIndex < _questions.length
+            ? Quiz(
+                answerQuestion: _answerQuestion,
+                questionIndex: _questionIndex,
+                questions: _questions,
+              )
+            : Result(_totalScore, _resetQuiz),
       ),
-      body: _questionIndex < questions.length
-          ? Column(
-              children: [
-                Question(
-                  questions[_questionIndex]['questionText'] as String,
-                ),
-                ...(questions[_questionIndex]['answers'] as List<String>)
-                    .map((answer) {
-                  return Answer(_answerQuestion, answer);
-                }).toList()
-              ],
-            )
-          : Center(
-              child: Text(
-                'You did it!',
-                style: TextStyle(fontSize: 35, fontStyle: FontStyle.italic),
-              ),
-            ),
-    ));
+    );
   }
 }
