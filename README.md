@@ -1,3 +1,3 @@
 # Quiz App
 
-A basic quiz app.
+A basic quiz app made with flutter.
